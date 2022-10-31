@@ -3,7 +3,8 @@ from email.message import EmailMessage
 import requests
 import ssl 
 import smtplib
-
+from email.mime.text import MIMEText
+import time
 
 
 # This returns a list of all the article titles
@@ -15,23 +16,35 @@ def scrape_headlines():
     listArticles = (soup.find_all('h3'))
     return listArticles
 
-email_sender = 'duckduckmongoose1@gmail.com'
-email_password = 'ivbptljvsyzcahiv'
-email_receiver = 'imscrol@gmail.com'
 
-subject = 'Email Sent From Python'
-body = """
-Sent from my computer using python
-"""
+# one-time password = ylobrkmtneyfozsu
+#sends an email to myself containing the headlines
+def send_email(headlines):
+    email_sender = 'duckduckmongoose1@gmail.com'
+    email_password = 'ivbptljvsyzcahiv'
+    email_receiver = 'imscrol@gmail.com'
 
-em = EmailMessage()
-em['From'] = email_sender
-em['To'] = email_receiver
-em['Subject'] = subject
-em.set_content(body)
+    port = 1025
+    msg = MIMEText('This is test mail')
+    msg['Subject'] = 'Test Mail'
+    msg['From'] = 'duckduckmongoose1@gmail.com'
 
-context = ssl.create_default_context()
+    subject = 'Email Sent From Python'
+    for i in headlines:
+        body += i.get_text()
 
-with smtplib.SMTP_SSL('smtp@gmail.com', 465, context=context) as smtp:
-    smtp.login(email_sender, email_password)
-    #smtp.sendmail(email_sender, email_receiver, em.as_string())
+    em = EmailMessage()
+    em['From'] = email_sender
+    em['To'] = email_receiver
+    em['Subject'] = subject
+    em.set_content(body)
+
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL('smtp@gmail.com', 465, context=context) as smtp:
+        smtp.login(email_sender, email_password)
+        smtp.sendmail(email_sender, email_receiver, em.as_string())
+
+print('hello')
+time.sleep(5)
+print('hello')
